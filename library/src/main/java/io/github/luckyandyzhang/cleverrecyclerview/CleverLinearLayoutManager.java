@@ -82,11 +82,11 @@ class CleverLinearLayoutManager extends LinearLayoutManager {
             protected void onTargetFound(View targetView, RecyclerView.State state, Action action) {
                 super.onTargetFound(targetView, state, action);
 
-                //FIXME 去掉烦人的提示...
+                //FIXME 去掉烦人的提示... (Remove annoying tips)
                 try {
                     if (consecutiveUpdates == null) {
                         consecutiveUpdates = Action.class.getDeclaredField("consecutiveUpdates");
-                        consecutiveUpdates.setAccessible(true);//允许访问私有字段
+                        consecutiveUpdates.setAccessible(true);//允许访问私有字段 (Allows access to private fields)
                     }
                     consecutiveUpdates.setInt(action, 0);
                 } catch (NoSuchFieldException e) {

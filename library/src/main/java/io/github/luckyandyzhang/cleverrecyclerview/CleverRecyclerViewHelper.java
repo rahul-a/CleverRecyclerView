@@ -70,6 +70,7 @@ class CleverRecyclerViewHelper {
 
     /**
      * 设置一页可以显示多少个View
+     * Setup a display number for views to be shown
      *
      * @param visibleChildCount 希望显示的数量
      */
@@ -88,6 +89,7 @@ class CleverRecyclerViewHelper {
 
     /**
      * 获取当前第一个可见的View
+     * Get the current first visible view
      *
      * @return 返回当前第一个可见的View
      */
@@ -141,6 +143,7 @@ class CleverRecyclerViewHelper {
 
     /**
      * 根据速度计算出该滑动动作需要偏移多少个view
+     * The rate is calculated according to a sliding action needs to offset the number of view
      *
      * @param velocityX 横向速度
      * @param velocityY 纵向速度
@@ -205,6 +208,7 @@ class CleverRecyclerViewHelper {
 
     /**
      * 在保证不越界的情况下，获取安全索引
+     * In ensuring no cross-border cases, access to safe Index
      *
      * @param position 目标索引
      * @param count    容量

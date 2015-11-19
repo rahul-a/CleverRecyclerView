@@ -124,11 +124,19 @@ public class CleverRecyclerView extends RecyclerView {
         super.smoothScrollToPosition(position);
     }
 
-    // 1.SCROLL_STATE_DRAGGING -> SCROLL_STATE_IDLE （用户松手后，视图没有在滚动的情况）
-    // 2.SCROLL_STATE_DRAGGING -> SCROLL_STATE_SETTLING (会触发onFling方法)-> SCROLL_STATE_IDLE （用户松手后，视图还在在滚动的情况，触发了onFling）
+    // 1.SCROLL_STATE_DRAGGING -> SCROLL_STATE_IDLE （用户松手后，视图没有在滚动的情况）(When the user let go, the view did not scrolling)
+    // 2.SCROLL_STATE_DRAGGING -> SCROLL_STATE_SETTLING (会触发onFling方法) (It will trigger onFling method) ->
+    // SCROLL_STATE_IDLE （用户松手后，视图还在在滚动的情况，触发了onFling）(When the user let go, the view is still in scrolling triggered onFling)
+    //
     // 触发了onFling方法后，会在该方法中进行ChildView的位置偏移。并且会触发SCROLL_STATE_SETTLING状态~ 所以一旦进入了SCROLL_STATE_SETTLING状态
+    // After triggered onFling methods will be conducted in the method ChildView position offset.
+    // And will trigger SCROLL_STATE_SETTLING state - so once entered SCROLL_STATE_SETTLING state
+    //
     // 则表明了ChildView已经偏移好了位置，那么在SCROLL_STATE_IDLE的时候，就不需要处理位置偏移了
+    // It indicates that the ChildView has shifted a good position, then SCROLL_STATE_IDLE time, it does not deal with the position shifted
+
     // smoothScrollToPosition会触发 SCROLL_STATE_SETTLING 状态
+    // smoothScrollToPosition Triggers SCROLL_STATE_SETTLING state
     @Override
     public void onScrollStateChanged(int state) {
         super.onScrollStateChanged(state);
@@ -145,7 +153,8 @@ public class CleverRecyclerView extends RecyclerView {
                 mNeedAdjustAfterScrollStopped = false;
                 break;
             case SCROLL_STATE_IDLE:
-                //没有触发fling时，需要再次处理子View的位置偏移
+                // 没有触发fling时，需要再次处理子View的位置偏移
+                // Position offset does not trigger fling, you need to be addressed again in the sub-View
                 if (mNeedAdjustAfterScrollStopped) {
                     if (mCurrentChildView != null) {
                         float draggingDistance = mCleverRecyclerViewHelper.getChildCurrentPosition(mCurrentChildView) - mPositionBeforeDragging;
@@ -175,6 +184,7 @@ public class CleverRecyclerView extends RecyclerView {
 
     /**
      * 根据快速滚动的速度对子View进行偏移
+     * The quick scrolling speed to offset View
      */
     private void adjustPositionWithVelocity(int velocityX, int velocityY) {
         if (getChildCount() > 0) {
@@ -186,8 +196,9 @@ public class CleverRecyclerView extends RecyclerView {
 
     /**
      * 获取当前的位置
+     * Get the current location
      *
-     * @return 当前位置
+     * @return 当前位置 (current location)
      */
     public int getCurrentPosition() {
         return mCurrentPosition;
@@ -195,6 +206,7 @@ public class CleverRecyclerView extends RecyclerView {
 
     /**
      * 设置布局方向
+     * Set the layout direction
      *
      * @param orientation
      */
@@ -205,8 +217,9 @@ public class CleverRecyclerView extends RecyclerView {
 
     /**
      * 设置滚动动画的时长
+     * Set the animation when scrolling long
      *
-     * @param decelerationDuration 动画时长,默认是280ms
+     * @param decelerationDuration 动画时长,默认是280ms (Animation length, the default is 280ms)
      */
     public void setScrollAnimationDuration(int decelerationDuration) {
         mCleverLinearLayoutManager.setDecelerationDuration(decelerationDuration);
@@ -214,6 +227,8 @@ public class CleverRecyclerView extends RecyclerView {
 
     /**
      * 设置相邻的2个View在当前视图可以显示的区域,目前只支持横向布局,并且在一页只有一个child view的情况下才生效
+     * Set adjacent 2 View the current view in the region that can be displayed,
+     * currently only supports horizontal layout, and will take effect in the case of only one child view of a page
      *
      * @param displayArea
      */
@@ -228,10 +243,13 @@ public class CleverRecyclerView extends RecyclerView {
 
     /**
      * 设置快速滑动时的摩擦因子
+     * Friction factor when setting flick
      *
      * @param friction 取值范围 [0.0 - 1.0]
-     *                 <li>默认：0.8f
-     *                 <li>注意：值越大，摩擦越大，快速滑动越困难
+     *                 Ranges [0.0 - 1.0]
+     *                 <li>默认：0.8f (Default: 0.8f)
+     *                 <li>注意：值越大，摩擦越大，快速滑动越困难 (Note: The higher the value, the greater the friction,
+     *                                                              the more difficult flick)
      */
     public void setFlingFriction(float friction) {
         if (friction > 1.0f || friction < 0f) {
@@ -242,10 +260,12 @@ public class CleverRecyclerView extends RecyclerView {
 
     /**
      * 设置触发翻页动作的滚动距离,
-     *
+     * Set action trigger flip scrolling distance
      * @param slidingThreshold 取值范围 [0.0 - 1.0]
-     *                         <li>默认：0.22f
+     *                         Ranges [0.0 - 1.0]
+     *                         <li>默认：0.22f (Default: 0.22f)
      *                         <li>注意：值越小，翻页所需的滚动距离越小，即越容易翻页
+     *                         (Note: The smaller the value, the smaller the rolling distance required page, i.e. page more easily)
      */
     public void setSlidingThreshold(float slidingThreshold) {
         if (slidingThreshold > 1.0f || slidingThreshold < 0f) {
@@ -256,9 +276,12 @@ public class CleverRecyclerView extends RecyclerView {
 
     /**
      * 设置一页可以显示的item的数量
-     * <p>注意：此方法必须在{@link CleverRecyclerView#setAdapter(Adapter)}之后调用
+     * You can set the number of page display item of
      *
-     * @param visibleChildCount 目标数量
+     * <p>注意：此方法必须在{@link CleverRecyclerView#setAdapter(Adapter)}之后调用
+     *    Note: This method must be called after calling {@link CleverRecyclerView#setAdapter(Adapter)}
+     *
+     * @param visibleChildCount 目标数量 Target Number
      */
     public void setVisibleChildCount(int visibleChildCount) {
         if (mCleverRecyclerViewAdapterProxy == null) {
@@ -270,7 +293,7 @@ public class CleverRecyclerView extends RecyclerView {
 
     /**
      * 监听页面切换
-     *
+     * Listener page switching
      * @param onPageChangedListener {@link OnPageChangedListener}
      */
     public void setOnPageChangedListener(OnPageChangedListener onPageChangedListener) {
@@ -279,6 +302,7 @@ public class CleverRecyclerView extends RecyclerView {
 
     /**
      * 页面切换的回调
+     * Callback page switching
      */
     public interface OnPageChangedListener {
         void onPageChanged(int currentPosition);
